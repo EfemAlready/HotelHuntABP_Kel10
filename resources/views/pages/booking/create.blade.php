@@ -24,13 +24,13 @@
                     <p class="text-success">{{ session('success') }}</p>
                 @endif
                 <div class="table-responsive">
-                    <form method="post" enctype="multipart/form-data" action="{{ url('admin/customer') }}">
+                    <form method="post" enctype="multipart/form-data" action="{{ url('admin/booking') }}">
                         @csrf
                         <table class="table table-bordered">
                             <tr>
                                 <th>Select Customer <span class="text-danger">*</span></th>
                                 <td>
-                                    <select class="form-control">
+                                    <select class="form-control" name="cs_id">
                                         <option>--- Select Customer ---</option>
                                         @foreach ($data as $customer)
                                             <option value="{{ $customer->id }}">{{ $customer->fullname }}</option>
@@ -49,7 +49,7 @@
                             <tr>
                                 <th>Available Rooms <span class="text-danger">*</span></th>
                                 <td>
-                                    <select class="form-control room">
+                                    <select class="form-control room-list" name="room_id">
                                         
                                     </select>
                                 </td>
@@ -81,37 +81,37 @@
 
 @section('scripts')
     <script type="text/javascript">
-        $(document).ready(function() {
-            $(".checkin-date").on('blur', function() {
-                var _checkindate = $(this).val();
-                //ajax
+        $(document).ready(function(){
+        $(".checkin-date").on('blur',function(){
+            var _checkindate=$(this).val();
+            // Ajax
+            $.ajax({
+                url:"{{url('admin/booking')}}/available-rooms/"+_checkindate,
+                dataType:'json',
+                beforeSend:function(){
+                    $(".room-list").html('<option>--- Loading ---</option>');
+                },
+                success:function(res){
+                    var _html='';
+                    $.each(res.data,function(index,row){
+                        _html+='<option data-price="'+row.roomtype.price+'" value="'+row.room.id+'">'+row.room.title+'-'+row.roomtype.title+'</option>';
+                    });
+                    $(".room-list").html(_html);
 
-                $.ajax({
-                    url: "{{ url('admin/booking')}}/available-rooms/"+_checkindate,
-
-                    dataType: 'json',
-                    success:function(res) {
-                        console.log(res);
-                    }
-                    
-                });
-
-                // $.ajax({
-                //     url:"{{ url('admin/booking') }}/available-rooms/"+_checkindate,                
-                //     dataType:'json',
-                //     beforeSend:function(){
-                //         $(".room-list").html('<option>--- Loading ---</option>');
-                //     }
-                //     success:function(res){
-                //         var _html='';
-                //         $.each(res.data,function(index,row){
-                //             _html+='<option value="'+row.id+'">'+row.title+'</option>'
-                //         });
-                //         $(".room-list").html(_html);
-                //     }
-                // });            
+                    var _selectedPrice=$(".room-list").find('option:selected').attr('data-price');
+                    $(".room-price").val(_selectedPrice);
+                    $(".show-room-price").text(_selectedPrice);
+                }
             });
         });
+
+        $(document).on("change",".room-list",function(){
+            var _selectedPrice=$(this).find('option:selected').attr('data-price');
+            $(".room-price").val(_selectedPrice);
+            $(".show-room-price").text(_selectedPrice);
+        });
+
+    });
     </script>
 @endsection
 

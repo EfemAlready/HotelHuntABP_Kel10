@@ -42,6 +42,7 @@ class RoomController extends Controller
     {
         $data = new Room;
         $data->room_type_id = $request->rt_id;
+        $data->title = $request->title;
         $data->save();
 
         return redirect('admin/room/create')->with('success', 'Data has been added.');
@@ -86,7 +87,7 @@ class RoomController extends Controller
     {
         $data = Room::find($id);
         $data->room_type_id = $request->rt_id;
-        
+        $data->room = $request->title;
         $data->save();
 
         return redirect('admin/room/' . $id . '/edit')->with('success', 'Data has been updated.');

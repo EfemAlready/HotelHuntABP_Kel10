@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
+use App\Models\RoomType;
+use App\Models\Hotel;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
@@ -25,7 +28,7 @@ class BookingController extends Controller
         return view('pages.book', [
             "title" => "Booking"
         ]);
-    }   
+    }
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +36,8 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+        $data = RoomType::all();
+        return view('pages.booking.index', ['data' => $data]);
     }
 
     /**
@@ -43,9 +47,9 @@ class BookingController extends Controller
      */
     public function create()
     {
-
-        $customer=Customer::all();
-        return view('pages.booking.create',['data'=>$customer]);
+        // $hotels = Hotel::all();
+        $customer = Customer::all();
+        return view('pages.booking.create', ['data' => $customer]);
     }
 
     /**
@@ -56,7 +60,28 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $request->validate([
+        //     'customer_id' => 'required',
+        //     'room_id' => 'required',
+        //     'checkin_date' => 'required',
+        //     'checkout_date' => 'required',
+        //     'total_adults' => 'required',
+        //     // 'hotels_id' => 'required',
+        // ]);
+
+
+        $data = new Booking;
+        $data->customer_id = $request->cs_id;
+        $data->room_id = $request->room_id;
+        $data->checkin_date = $request->checkin_date;
+        $data->checkout_date = $request->checkout_date;
+        $data->total_adults = $request->total_adult;
+        $data->total_children = $request->total_children;
+        // $data->hotel_id = $request->hl_id;
+
+
+        $data->save();
+        return redirect('admin/booking/create')->with('success', 'Data has been added.');
     }
 
     /**
@@ -105,9 +130,16 @@ class BookingController extends Controller
     }
 
     // check available rooms
-    function available_rooms(Request $request, $checkin_date){
-        return response()->json($checkin_date);
-        $arooms=DB::SELECT("SELECT * FROM rooms WHERE id NOT IN (SELECT room_id FROM bookings WHERE '$checkin_date' BETWEEN checkin_date AND checkout_date)");
-        return response()->json(['data'=>$arooms]);
+    function available_rooms(Request $request, $checkin_date)
+    {
+        $arooms = DB::SELECT("SELECT * FROM rooms WHERE id NOT IN (SELECT room_id FROM bookings WHERE '$checkin_date' BETWEEN checkin_date AND checkout_date)");
+
+        $data = [];
+        foreach ($arooms as $room) {
+            $roomTypes = RoomType::find($room->room_type_id);
+            $data[] = ['room' => $room, 'roomtype' => $roomTypes];
+        }
+
+        return response()->json(['data' => $data]);
     }
 }

@@ -25,5 +25,5 @@
 
    @yield('content')
     
-
+  
 </html>
