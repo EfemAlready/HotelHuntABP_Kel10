@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="img/" width="400"></a></p>
-=======
+
 <p align="center"><a href="https://www.instagram.com/padilfm/" target="_blank"><img src="public/img/logo_biru.png" widht="255px" height"77px"></a></p>
->>>>>>> c557e6be699d1f4fa880e730dee7bb56f51adb4d
 
 ## About HotelHunt
 
