@@ -3,6 +3,10 @@
 
 ## About HotelHunt
 
-Widi Sayyid Fadhil M
+1. Widi Sayyid Fadhil M
 * Landing Page User
 * Find Hotel
+
+2. Hafid Ahmad
+* Login
+* Sign Up
